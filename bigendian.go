@@ -91,27 +91,26 @@ func Read48(r io.Reader, n *uint64) (err error) {
 }
 
 // Read first 1 byte as length
-func ReadPrefix1(r io.Reader, b []byte) (err error) {
+func ReadPrefix1(r io.Reader, b *[]byte) (err error) {
 	var length uint8
 	err = binary.Read(r, o, &length)
 
 	var buf []byte = make([]byte, int(length))
 	binary.Read(r, o, buf)
 
-  p(b, buf)
-	copy(b, buf)
-  p(b)
+	*b = buf
 	return
 }
 
 // Read first 2 byte as length
-func ReadPrefix2(r io.Reader, b []byte) (err error) {
+func ReadPrefix2(r io.Reader, b *[]byte) (err error) {
 	var length uint16
 	err = binary.Read(r, o, &length)
 
 	var buf []byte = make([]byte, int(length))
 	binary.Read(r, o, buf)
-	copy(b, buf)
+
+	*b = buf
 	return
 }
 
@@ -198,11 +197,11 @@ func Write48(w io.Writer, n uint64) (err error) {
 
 // Write first 1 byte as length
 func WritePrefix1(w io.Writer, b []byte) (err error) {
-  p(len(b), b)
+	p(len(b), b)
 	var length uint8 = uint8(len(b))
 	err = binary.Write(w, o, length)
 	err = binary.Write(w, o, b)
-  p(err)
+	p(err)
 	return
 }
 
