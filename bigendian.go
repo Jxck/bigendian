@@ -197,11 +197,9 @@ func Write48(w io.Writer, n uint64) (err error) {
 
 // Write first 1 byte as length
 func WritePrefix1(w io.Writer, b []byte) (err error) {
-	p(len(b), b)
 	var length uint8 = uint8(len(b))
 	err = binary.Write(w, o, length)
 	err = binary.Write(w, o, b)
-	p(err)
 	return
 }
 
