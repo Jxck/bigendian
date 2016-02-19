@@ -114,6 +114,20 @@ func ReadPrefix2(r io.Reader, b *[]byte) (err error) {
 	return
 }
 
+// Read first 3 byte as length
+func ReadPrefix3(r io.Reader, b *[]byte) (err error) {
+	var l [3]byte
+	err = binary.Read(r, o, &l)
+
+	var length uint32 = uint32(l[0])<<16 + uint32(l[1])<<8 + uint32(l[2])
+
+	var buf []byte = make([]byte, int(length))
+	binary.Read(r, o, buf)
+
+	*b = buf
+	return
+}
+
 //////////////////
 
 // delegate
@@ -207,6 +221,16 @@ func WritePrefix1(w io.Writer, b []byte) (err error) {
 func WritePrefix2(w io.Writer, b []byte) (err error) {
 	var length uint16 = uint16(len(b))
 	err = binary.Write(w, o, length)
+	err = binary.Write(w, o, b)
+	return
+}
+
+// Write first 3 byte as length
+func WritePrefix3(w io.Writer, b []byte) (err error) {
+	var length uint32 = uint32(len(b))
+	err = binary.Write(w, o, byte(length>>16))
+	err = binary.Write(w, o, byte(length>>8))
+	err = binary.Write(w, o, byte(length))
 	err = binary.Write(w, o, b)
 	return
 }
